@@ -1,9 +1,9 @@
 const chalk = require('chalk');
-const configMgr = require('../config/config-mgr');
+const getConfig = require('../config/config-mgr');
 
 function start() {
     try {
-        const config = configMgr.getConfig();
+        const config = getConfig();
         console.log(chalk.bgCyanBright('  Starting the app  '));
         console.log(chalk.gray('Received configuration in start -'), config);
         

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const arg = require('arg');
 const chalk = require('chalk');
-const { getConfig } = require('../src/config/config-mgr');
+const getConfig = require('../src/config/config-mgr');
 const { start } = require('../src/commands/start');
 
 try {
@@ -11,7 +11,7 @@ try {
   });
 
   if (args['--start']) {
-    console.log(chalk.blue('Found configuration'), getConfig());
+    getConfig(); // This will handle the console.log internally
     start();
   }
 } catch (e) {

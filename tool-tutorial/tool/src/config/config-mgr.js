@@ -1,28 +1,25 @@
-const path = require('path');
-const fs = require('fs');
+const chalk = require('chalk');
+const { cosmiconfigSync } = require('cosmiconfig');
+const schema = require('./schema.json');
+const betterAjvErrors = require('better-ajv-errors');
+const Ajv = require('ajv').default;
+const ajv = new Ajv();
+const configLoader = cosmiconfigSync('tool');
 
-function getConfig() {
-    // Look for tool.config.js in the current working directory
-    const configPath = path.resolve(process.cwd(), 'tool.config.js');
-    
-    // Clear require cache to allow config reloading
-    if (require.cache[configPath]) {
-        delete require.cache[configPath];
+module.exports = function getConfig() {
+  const result = configLoader.search(process.cwd());
+  if (!result) {
+    console.log(chalk.yellow('Could not find configuration, using default'));
+    return { port: 1234 };
+  } else {
+    const isValid = ajv.validate(schema, result.config);
+    if (!isValid) {
+      console.log(chalk.yellow('Invalid configuration was supplied'));
+      console.log();
+      console.log(betterAjvErrors(schema, result.config, ajv.errors));
+      process.exit(1);
     }
-    
-    try {
-        // Check if file exists
-        if (!fs.existsSync(configPath)) {
-            throw new Error(`Configuration file not found at ${configPath}`);
-        }
-        
-        return require(configPath);
-    } catch (error) {
-        if (error.code === 'MODULE_NOT_FOUND') {
-            throw new Error(`Configuration file not found at ${configPath}`);
-        }
-        throw error;
-    }
+    console.log('Found configuration', result.config);
+    return result.config;
+  }
 }
-
-module.exports = { getConfig };
