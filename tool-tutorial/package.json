@@ -1,0 +1,10 @@
+{
+  "name": "tool-tutorial",
+  "workspaces": ["tool", "testProject"],
+  "dependencies": {
+    "arg": "^5.0.2",
+    "chalk": "^4.1.2",
+    "cosmiconfig": "^9.0.0",
+    "package-up": "^5.0.0"
+  }
+}
